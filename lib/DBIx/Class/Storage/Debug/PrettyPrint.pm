@@ -52,13 +52,16 @@ sub new {
    $self->_executing_str($executing);
    $self->_show_progress($show_progress);
 
-   if ($args->{format}) {
+   $args->{multiline_format} = '    %m' unless exists $args->{multiline_format};
+
+   if ($args->{format} || $args->{multiline_format}) {
+      $args->{format} = '%m' unless $args->{format};
 
       my $log_sprintf = Log::Sprintf->new({ format => $args->{format} });
 
       my $per_line_log_sprintf = Log::Sprintf->new({
          format => $args->{multiline_format}
-      });
+      }) if $args->{multiline_format};
 
       my %formats = %{{
          map { $_->{conversion} => 1 }

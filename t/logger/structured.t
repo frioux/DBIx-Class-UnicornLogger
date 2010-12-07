@@ -40,6 +40,7 @@ use DBIx::Class::Storage::Debug::PrettyPrint;
       fill_in_placeholders => 1,
       placeholder_surround => ['', ''],
       format => "[%d] %m",
+      multiline_format => undef,
       show_progress => 0,
    });
 
