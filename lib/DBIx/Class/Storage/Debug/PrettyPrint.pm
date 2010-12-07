@@ -72,30 +72,33 @@ sub new {
             $per_line_log_sprintf->{format}
       }};
 
+      my $sub = $args->{multiline_format}
+        ? sub {
+            my %struc = %{$_[1]};
+            my (@msg, undef) = split /\n/, delete $struc{message};
+            $self->debugfh->print($log_sprintf->sprintf({
+               %struc,
+               message => shift @msg,
+            }) . "\n");
+            $self->debugfh->print($per_line_log_sprintf->sprintf({
+               %struc,
+               message => $_,
+            }) . "\n") for @msg;
+         }
+        : sub {
+          my %struc = %{$_[1]};
+          my (@msg, undef) = split /\n/, delete $struc{message};
+          $self->debugfh->print($log_sprintf->sprintf({
+             %struc,
+             message => $_,
+          }) . "\n") for @msg;
+        };
       $self->_structured_logger(
          Log::Structured->new({
             category     => 'DBIC',
             priority     => 'TRACE',
             caller_depth => 2,
-            log_event_listeners => [sub {
-               my %struc = %{$_[1]};
-               my (@msg, undef) = split /\n/, delete $struc{message};
-               if ($args->{multiline_format}) {
-                  $self->debugfh->print($log_sprintf->sprintf({
-                     %struc,
-                     message => shift @msg,
-                  }) . "\n");
-                  $self->debugfh->print($per_line_log_sprintf->sprintf({
-                     %struc,
-                     message => $_,
-                  }) . "\n") for @msg;
-               } else {
-                  $self->debugfh->print($log_sprintf->sprintf({
-                     %struc,
-                     message => $_,
-                  }) . "\n") for @msg;
-               }
-            }],
+            log_event_listeners => [$sub],
             map { $code_to_method{$_} => 1 }
             grep { exists $code_to_method{$_} }
             keys %formats
