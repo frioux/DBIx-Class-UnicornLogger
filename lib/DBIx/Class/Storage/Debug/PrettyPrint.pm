@@ -32,27 +32,61 @@ my %code_to_method = (
   R => 'log_milliseconds_since_last_log',
 );
 
-sub new {
-   my $class = shift;
-   my $args  = shift;
-
-   my $clear_line = $args->{clear_line} || "\r\x1b[J";
-   my $executing  = $args->{executing}  || (
+my %profiles = do {
+   my @simple_mf = ( multiline_format => '    %m'   );
+   my @simple_cl = ( clear_line       => "\r\x1b[J" );
+   my @good_executing = (
+      executing =>
       eval { require Term::ANSIColor } ? do {
           my $c = \&Term::ANSIColor::color;
           $c->('blink white on_black') . 'EXECUTING...' . $c->('reset');
       } : 'EXECUTING...'
    );
+   my @show_progress = ( show_progress => 1 );
+   (
+      console => {
+         @simple_mf,
+         @simple_cl,
+         @show_progress,
+         @good_executing,
+      },
+      console_monochrome => {
+         @simple_mf,
+         @simple_cl,
+         @show_progress,
+         @good_executing,
+      },
+      plain => {
+         profile => 'console_monochrome',
+         @simple_mf,
+         clear_line => "DONE\n",
+         show_progress => 1,
+         executing => 'EXECUTING...',
+      },
+   )
+};
+
+sub new {
+   my $class = shift;
+   my $args  = shift || {};
+
+   $args = {
+      %{$profiles{$args->{profile}||''}||{}},
+      %$args,
+   };
+
+   $args->{profile} = 'console_monochrome' if $args->{profile} eq 'plain';
+
+   my $clear_line    = $args->{clear_line};
+   my $executing     = $args->{executing};
    my $show_progress = $args->{show_progress};
 
    my $squash_repeats = $args->{squash_repeats};
    my $sqlat = SQL::Abstract::Tree->new($args);
-   my $self = $class->next::method(@_);
+   my $self  = $class->next::method(@_);
    $self->_clear_line_str($clear_line);
    $self->_executing_str($executing);
    $self->_show_progress($show_progress);
-
-   $args->{multiline_format} = '    %m' unless exists $args->{multiline_format};
 
    if ($args->{format} || $args->{multiline_format}) {
       $args->{format} = '%m' unless $args->{format};
@@ -186,6 +220,10 @@ Where dbic.json contains:
    "show_progress":1,
    "squash_repeats":1
  }
+
+or you may set profile to any of the profiles offered by L<SQL::Abstract::Tree>
+and additionally C<plain>, which is made for dumb terminals which do not
+support the standard console escapes.
 
 =head1 METHODS
 
