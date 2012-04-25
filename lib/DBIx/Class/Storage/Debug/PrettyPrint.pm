@@ -75,7 +75,8 @@ sub new {
       %$args,
    };
 
-   $args->{profile} = 'console_monochrome' if $args->{profile} eq 'plain';
+   $args->{profile} = 'console_monochrome'
+      if $args->{profile} && $args->{profile} eq 'plain';
 
    my $clear_line    = $args->{clear_line};
    my $executing     = $args->{executing};
