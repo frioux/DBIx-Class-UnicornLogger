@@ -108,8 +108,9 @@ has _last_sql => (
    init_arg => undef,
 );
 
-has squash_repeats => (
+has _squash_repeats => (
    is => 'ro',
+   init_arg => 'squash_repeats',
 );
 
 has _structured_logger => (
@@ -198,7 +199,7 @@ sub print {
 
   my $sqlat = $self->_sqlat;
   my $formatted;
-  if ($self->squash_repeats && $self->_last_sql eq $string) {
+  if ($self->_squash_repeats && $self->_last_sql eq $string) {
      my ( $l, $r ) = @{ $sqlat->placeholder_surround };
      $formatted = '... : ' . join(', ', map "$l$_$r", @$bindargs)
   } else {
