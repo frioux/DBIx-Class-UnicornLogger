@@ -1,4 +1,4 @@
-package DBIx::Class::Storage::Debug::PrettyPrint;
+package DBIx::Class::UnicornLogger;
 
 use Moo;
 extends 'DBIx::Class::Storage::Statistics';

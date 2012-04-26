@@ -3,12 +3,12 @@ use warnings;
 
 use Test::More;
 
-use DBIx::Class::Storage::Debug::PrettyPrint;
+use DBIx::Class::UnicornLogger;
 
 my $cap;
 open my $fh, '>', \$cap;
 
-my $pp = DBIx::Class::Storage::Debug::PrettyPrint->new({
+my $pp = DBIx::Class::UnicornLogger->new({
    show_progress => 1,
    clear_line    => 'CLEAR',
    executing     => 'GOGOGO',
