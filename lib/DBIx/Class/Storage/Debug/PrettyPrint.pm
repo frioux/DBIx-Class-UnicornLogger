@@ -1,21 +1,11 @@
 package DBIx::Class::Storage::Debug::PrettyPrint;
 
-use strict;
-use warnings;
-
-use base 'DBIx::Class::Storage::Statistics';
+use Moo;
+extends 'DBIx::Class::Storage::Statistics';
 
 use SQL::Abstract::Tree;
 use Log::Structured;
 use Log::Sprintf;
-
-__PACKAGE__->mk_group_accessors( simple => '_sqlat' );
-__PACKAGE__->mk_group_accessors( simple => '_clear_line_str' );
-__PACKAGE__->mk_group_accessors( simple => '_executing_str' );
-__PACKAGE__->mk_group_accessors( simple => '_show_progress' );
-__PACKAGE__->mk_group_accessors( simple => '_last_sql' );
-__PACKAGE__->mk_group_accessors( simple => 'squash_repeats' );
-__PACKAGE__->mk_group_accessors( simple => '_structured_logger' );
 
 my %code_to_method = (
   C => 'log_package',
@@ -66,37 +56,79 @@ my %profiles = do {
    )
 };
 
-sub new {
-   my $class = shift;
-   my $args  = shift || {};
+sub BUILDARGS {
+   my ($self, @rest) = @_;
 
-   $args = {
-      %{$profiles{$args->{profile}||''}||{}},
-      %$args,
-   };
+   my %args = (
+      @rest == 1
+         ? %{$rest[0]}
+         : @rest
+   );
 
-   $args->{profile} = 'console_monochrome'
-      if $args->{profile} && $args->{profile} eq 'plain';
+   $args{profile} = 'console_monochrome'
+      if $args{profile} && $args{profile} eq 'plain';
 
-   my $clear_line    = $args->{clear_line};
-   my $executing     = $args->{executing};
-   my $show_progress = $args->{show_progress};
+   %args = (
+      %{$profiles{$args{profile}||''}||{}},
+      %args,
+   );
 
-   my $squash_repeats = $args->{squash_repeats};
-   my $sqlat = SQL::Abstract::Tree->new($args);
-   my $self  = $class->next::method(@_);
-   $self->_clear_line_str($clear_line);
-   $self->_executing_str($executing);
-   $self->_show_progress($show_progress);
+   $args{_sqlat} = SQL::Abstract::Tree->new(\%args);
 
-   if ($args->{format} || $args->{multiline_format}) {
-      $args->{format} = '%m' unless $args->{format};
+   return \%args
+}
 
-      my $log_sprintf = Log::Sprintf->new({ format => $args->{format} });
+has _profile => (
+   is => 'ro',
+   init_arg => 'profile',
+);
+
+has _sqlat => (
+   is => 'ro',
+);
+
+has _clear_line_str => (
+   is => 'ro',
+   init_arg => 'clear_line',
+);
+
+has _executing_str => (
+   is => 'ro',
+   init_arg => 'executing',
+);
+
+has _show_progress => (
+   is => 'ro',
+   init_arg => 'show_progress',
+);
+
+has _last_sql => (
+   is => 'rw',
+   default => sub { '' },
+   init_arg => undef,
+);
+
+has squash_repeats => (
+   is => 'ro',
+);
+
+has _structured_logger => (
+   is => 'rw',
+   lazy => 1,
+   builder => '_build_structured_logger',
+);
+
+sub _build_structured_logger {
+   my $self = shift;
+
+   if ($self->_format || $self->_multiline_format) {
+      my $format = $self->_format || '%m';
+
+      my $log_sprintf = Log::Sprintf->new({ format => $format });
 
       my $per_line_log_sprintf = Log::Sprintf->new({
-         format => $args->{multiline_format}
-      }) if $args->{multiline_format};
+         format => $self->_multiline_format
+      }) if $self->_multiline_format;
 
       my %formats = %{{
          map { $_->{conversion} => 1 }
@@ -107,7 +139,7 @@ sub new {
             $per_line_log_sprintf->{format}
       }};
 
-      my $sub = $args->{multiline_format}
+      my $sub = $self->_multiline_format
         ? sub {
             my %struc = %{$_[1]};
             my (@msg, undef) = split /\n/, delete $struc{message};
@@ -128,7 +160,7 @@ sub new {
              message => $_,
           }) . "\n") for @msg;
         };
-      $self->_structured_logger(
+      return
          Log::Structured->new({
             category     => 'DBIC',
             priority     => 'TRACE',
@@ -138,15 +170,18 @@ sub new {
             grep { exists $code_to_method{$_} }
             keys %formats
          })
-      );
    }
-   $self->squash_repeats($squash_repeats);
-
-   $self->_sqlat($sqlat);
-   $self->_last_sql('');
-
-   return $self
 }
+
+has _format => (
+   is => 'ro',
+   init_arg => 'format',
+);
+
+has _multiline_format => (
+   is => 'ro',
+   init_arg => 'multiline_format',
+);
 
 sub print {
   my $self = shift;
