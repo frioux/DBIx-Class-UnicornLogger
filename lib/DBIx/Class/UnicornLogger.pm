@@ -22,40 +22,6 @@ my %code_to_method = (
   R => 'log_milliseconds_since_last_log',
 );
 
-my %profiles = do {
-   my @simple_mf = ( multiline_format => '    %m'   );
-   my @simple_cl = ( clear_line       => "\r\x1b[J" );
-   my @good_executing = (
-      executing =>
-      eval { require Term::ANSIColor } ? do {
-          my $c = \&Term::ANSIColor::color;
-          $c->('blink white on_black') . 'EXECUTING...' . $c->('reset');
-      } : 'EXECUTING...'
-   );
-   my @show_progress = ( show_progress => 1 );
-   (
-      console => {
-         @simple_mf,
-         @simple_cl,
-         @show_progress,
-         @good_executing,
-      },
-      console_monochrome => {
-         @simple_mf,
-         @simple_cl,
-         @show_progress,
-         @good_executing,
-      },
-      plain => {
-         profile => 'console_monochrome',
-         @simple_mf,
-         clear_line => "DONE\n",
-         show_progress => 1,
-         executing => 'EXECUTING...',
-      },
-   )
-};
-
 sub BUILDARGS {
    my ($self, @rest) = @_;
 
@@ -65,23 +31,10 @@ sub BUILDARGS {
          : @rest
    );
 
-   $args{profile} = 'console_monochrome'
-      if $args{profile} && $args{profile} eq 'plain';
-
-   %args = (
-      %{$profiles{$args{profile}||''}||{}},
-      %args,
-   );
-
    $args{_sqlat} = SQL::Abstract::Tree->new(\%args);
 
    return \%args
 }
-
-has _profile => (
-   is => 'ro',
-   init_arg => 'profile',
-);
 
 has _sqlat => (
    is => 'ro',

@@ -9,7 +9,6 @@ my $cap;
 open my $fh, '>', \$cap;
 
 my $pp = DBIx::Class::UnicornLogger->new({
-   profile => 'none',
    squash_repeats => 1,
    fill_in_placeholders => 1,
    placeholder_surround => ['', ''],
