@@ -19,7 +19,6 @@ sub get_profile {
 }
 
 sub profiles {
-   my @simple_cl = ( clear_line       => "\r\x1b[J" );
    my @good_executing = (
       executing =>
       eval { require Term::ANSIColor } ? do {
@@ -27,25 +26,27 @@ sub profiles {
           $c->('blink white on_black') . 'EXECUTING...' . $c->('reset');
       } : 'EXECUTING...'
    );
-   my @show_progress = ( show_progress => 1 );
    return {
       console => {
-         @simple_cl,
-         @show_progress,
+         tree => { profile => 'console' },
+         clear_line => "\r\x1b[J",
+         show_progress => 1,
          @good_executing,
       },
       console_monochrome => {
-         @simple_cl,
-         @show_progress,
+         tree => { profile => 'console_monochrome' },
+         clear_line => "\r\x1b[J",
+         show_progress => 1,
          @good_executing,
       },
       plain => {
+         tree => { profile => 'console_monochrome' },
          clear_line => "DONE\n",
          show_progress => 1,
          executing => 'EXECUTING...',
       },
       demo => {
-         profile => 'console',
+         tree => { profile => 'console' },
          format => '[%d][%F:%L]%n%m',
          clear_line => "DONE\n",
          show_progress => 1,

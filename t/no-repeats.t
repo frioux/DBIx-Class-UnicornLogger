@@ -10,8 +10,10 @@ open my $fh, '>', \$cap;
 
 my $pp = DBIx::Class::UnicornLogger->new({
    squash_repeats => 1,
-   fill_in_placeholders => 1,
-   placeholder_surround => ['', ''],
+   tree => {
+      fill_in_placeholders => 1,
+      placeholder_surround => ['', ''],
+   },
    show_progress => 0,
 });
 

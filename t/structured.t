@@ -10,10 +10,12 @@ use DBIx::Class::UnicornLogger;
    open my $fh, '>', \$cap;
 
    my $pp = DBIx::Class::UnicornLogger->new({
-      profile => 'console_monochrome',
       squash_repeats => 1,
-      fill_in_placeholders => 1,
-      placeholder_surround => ['', ''],
+      tree => {
+         profile => 'console_monochrome',
+         fill_in_placeholders => 1,
+         placeholder_surround => ['', ''],
+      },
       multiline_format => " -- %m",
       format => "[%d] %m",
       show_progress => 0,
@@ -35,10 +37,12 @@ use DBIx::Class::UnicornLogger;
    open my $fh, '>', \$cap;
 
    my $pp = DBIx::Class::UnicornLogger->new({
-      profile => 'console_monochrome',
       squash_repeats => 1,
-      fill_in_placeholders => 1,
-      placeholder_surround => ['', ''],
+      tree => {
+         profile => 'console_monochrome',
+         fill_in_placeholders => 1,
+         placeholder_surround => ['', ''],
+      },
       format => "[%d] %m",
       multiline_format => undef,
       show_progress => 0,
