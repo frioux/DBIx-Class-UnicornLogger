@@ -1,0 +1,6 @@
+*.swp
+Makefile
+*.gz
+.build
+DBIx-Class-UnicornLogger-*
+*.un~
