@@ -1,5 +1,7 @@
 package DBIx::Class::UnicornLogger;
 
+# ABSTRACT: Pretty Printing DebugObj with nicer logging features
+
 use Moo;
 extends 'DBIx::Class::Storage::Statistics';
 
@@ -195,31 +197,17 @@ sub query_end {
 
 =pod
 
-=head1 NAME
-
-DBIx::Class::Storage::Debug::PrettyPrint - Pretty Printing DebugObj
-
 =head1 SYNOPSIS
 
- DBIC_TRACE_PROFILE=~/dbic.json perl -Ilib ./foo.pl
-
-Where dbic.json contains:
-
- {
-   "profile":"console",
-   "show_progress":1,
-   "squash_repeats":1
- }
-
-or you may set profile to any of the profiles offered by L<SQL::Abstract::Tree>
-and additionally C<plain>, which is made for dumb terminals which do not
-support the standard console escapes.
+ my $debug_obj = DBIx::Class::UnicornLogger->new(
+    tree => { profile => 'console' },
+ );
 
 =head1 METHODS
 
 =head2 new
 
- my $pp = DBIx::Class::Storage::Debug::PrettyPrint->new({
+ my $pp = DBIx::Class::UnicornLogger->new(
    show_progress  => 1,             # tries it's best to make it clear that a SQL
                                     # statement is still running
    executing      => '...',         # the string that is added to the end of SQL
@@ -238,7 +226,13 @@ support the standard console escapes.
                                     # line of the log; if both are defined, format
                                     # will be used for the first line, and
                                     # multiline_format will be used for the rest
+   tree => {
+      profile => 'console',         # any arguments in the tree hashref will be
+   },                               # passed along to the SQL::Abstract::Tree
+                                    # constructor
    # any other args are passed through directly to SQL::Abstract::Tree
- });
+ );
 
+=head1 SEE ALSO
 
+L<DBIx::Class::UnicornLogger::FromProfile>, L<Log::Sprintf>

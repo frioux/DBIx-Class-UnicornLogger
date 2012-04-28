@@ -1,5 +1,7 @@
 package DBIx::Class::UnicornLogger::FromProfile;
 
+# ABSTRACT: Define your UnicornLogger with a single string!
+
 use Moo;
 
 extends 'DBIx::Class::UnicornLogger';
@@ -73,3 +75,39 @@ sub BUILDARGS {
 }
 
 1;
+
+__END__
+
+=pod
+
+=head1 SYNOPSIS
+
+ use DBIx::Class::UnicornLogger::FromProfile;
+ my $debug_object = DBIx::Class::UnicornLogger::FromProfile->new(
+    unicorn_profile => 'console'
+ );
+
+=head1 DESCRIPTION
+
+This pacakge is merely a collection of unicorn profiles.  Currently there are
+only a few but I'm completely willing to incorporate everyone's settings into
+this module.  So if you have a tweak you want to make to it, let me know!
+
+=head1 PROFILES
+
+=over 2
+
+=item * console - ok default
+
+=item * console_monochrome - use this if you hate color
+
+=item * plain - use this if you're on windows
+
+=item * demo - this merely shows a few of the capabilities of L<DBIx::Class::UnicornLogger>.
+
+=back
+
+=head1 SEE ALSO
+
+L<DBIx::Class::UnicornLogger>, L<SQL::Abstract::Tree>
+
