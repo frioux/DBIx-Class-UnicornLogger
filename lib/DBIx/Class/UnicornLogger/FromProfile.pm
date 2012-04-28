@@ -19,7 +19,6 @@ sub get_profile {
 }
 
 sub profiles {
-   my @simple_mf = ( multiline_format => '    %m'   );
    my @simple_cl = ( clear_line       => "\r\x1b[J" );
    my @good_executing = (
       executing =>
@@ -31,19 +30,23 @@ sub profiles {
    my @show_progress = ( show_progress => 1 );
    return {
       console => {
-         @simple_mf,
          @simple_cl,
          @show_progress,
          @good_executing,
       },
       console_monochrome => {
-         @simple_mf,
          @simple_cl,
          @show_progress,
          @good_executing,
       },
       plain => {
-         @simple_mf,
+         clear_line => "DONE\n",
+         show_progress => 1,
+         executing => 'EXECUTING...',
+      },
+      demo => {
+         profile => 'console',
+         format => '[%d][%F:%L]%n%m',
          clear_line => "DONE\n",
          show_progress => 1,
          executing => 'EXECUTING...',

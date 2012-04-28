@@ -9,7 +9,7 @@ subtest plain => sub {
       unicorn_profile => 'plain',
    );
 
-   is($ul->_multiline_format, '    %m', 'multiline_format gets correctly set');
+   is($ul->_multiline_format, undef, 'multiline_format gets correctly set');
    is($ul->_clear_line_str, "DONE\n", 'clear_line gets correctly set');
    is($ul->_executing_str, "EXECUTING...", 'executing gets correctly set');
 };
