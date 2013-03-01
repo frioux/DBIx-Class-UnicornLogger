@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+       - Fix a typo in ::FromProfile POD
 
 0.001001  2012-11-17 16:35:28 CST6CDT
        - Put MetaYAML back in dist

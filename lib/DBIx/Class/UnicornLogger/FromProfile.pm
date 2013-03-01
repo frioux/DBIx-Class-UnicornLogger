@@ -89,7 +89,7 @@ __END__
 
 =head1 DESCRIPTION
 
-This pacakge is merely a collection of unicorn profiles.  Currently there are
+This package is merely a collection of unicorn profiles.  Currently there are
 only a few but I'm completely willing to incorporate everyone's settings into
 this module.  So if you have a tweak you want to make to it, let me know!
 
