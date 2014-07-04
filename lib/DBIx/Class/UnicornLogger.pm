@@ -33,7 +33,7 @@ sub BUILDARGS {
          : @rest
    );
 
-   $args{_sqlat} = SQL::Abstract::Tree->new($args{tree});
+   $args{_sqlat} = SQL::Abstract::Tree->new($args{tree} || {});
 
    return \%args
 }
