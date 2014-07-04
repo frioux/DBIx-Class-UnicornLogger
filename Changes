@@ -1,6 +1,7 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+       - Fix stacktrace option (T)
        - Fix warning coming from SQL::Abstract::Tree
 
 0.001002  2013-03-02 10:31:56 CST6CDT

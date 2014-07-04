@@ -22,6 +22,7 @@ my %code_to_method = (
   p => 'log_priority',
   r => 'log_milliseconds_since_start',
   R => 'log_milliseconds_since_last_log',
+  T => 'log_stacktrace',
 );
 
 sub BUILDARGS {
