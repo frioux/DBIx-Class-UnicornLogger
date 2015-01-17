@@ -66,8 +66,9 @@ sub BUILDARGS {
          : @rest
    );
 
+   my $profile = delete $args{unicorn_profile};
    %args = (
-      %{$self->get_profile(delete $args{unicorn_profile})},
+      %{$self->get_profile($ENV{DBIC_UNICORN_PROFILE} || $profile)},
       %args,
    );
 
@@ -92,6 +93,12 @@ __END__
 This package is merely a collection of unicorn profiles.  Currently there are
 only a few but I'm completely willing to incorporate everyone's settings into
 this module.  So if you have a tweak you want to make to it, let me know!
+
+=head1 ENV VAR
+
+If you are using C<DBIx::Class::UnicornLogger::FromProfile>, you can set the
+profile by using an env var: C<DBIC_UNICORN_PROFILE>.  The env var overrides
+whatever the user passed.
 
 =head1 PROFILES
 
