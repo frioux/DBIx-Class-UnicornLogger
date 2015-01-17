@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+0.001004  2015-01-16 22:16:48-06:00 America/Chicago
        - Allow setting profile via ENV var (GH#3)
 
 0.001003  2014-07-03 23:40:54-05:00 America/Chicago
